@@ -1,4 +1,4 @@
-#!/usr/bin/python -u
+#!/usr/bin/python3 -u
 #
 # zmqdump - dump zmq messages on a socket
 #
@@ -78,7 +78,7 @@ class Zmqdump:
         Create context and socket obejcts.
         """
 
-        if (DEBUG): print "Setting up %s-socket" % (socket_type)
+        if (DEBUG): print("Setting up %s-socket" % (socket_type))
 
         self.context = zmq.Context()
 
@@ -108,16 +108,16 @@ class Zmqdump:
 
     def set_hwm(self, hwm):
         assert(type(hwm) is int)
-        if (DEBUG): print "Setting hwm to " + str(hwm)
+        if (DEBUG): print("Setting hwm to " + str(hwm))
 
         self.socket.setsockopt(zmq.RCVHWM, hwm)
         self.socket.setsockopt(zmq.SNDHWM, hwm)
 
 
     def set_pattern(self, pattern):
-        if (DEBUG): print "Setting subscription pattern '%s'" % pattern
+        if (DEBUG): print("Setting subscription pattern '%s'" % pattern)
         if (self.socket_type == "SUB"):
-            self.socket.setsockopt(zmq.SUBSCRIBE, pattern)
+            self.socket.setsockopt_string(zmq.SUBSCRIBE, pattern)
 
 
     def init_connection(self, method, endpoint):
@@ -126,7 +126,7 @@ class Zmqdump:
         """
         assert(method in ["bind", "connect"])
         assert(type(endpoint) is str and "://" in endpoint)
-        if (DEBUG): print "%s socket to %s" % (method, endpoint)
+        if (DEBUG): print("%s socket to %s" % (method, endpoint))
 
         if (method == "bind"):
             self.socket.bind(endpoint)
@@ -145,17 +145,17 @@ class Zmqdump:
 
 
     def print_loop(self):
-        if (DEBUG): print "Listening on socket."
+        if (DEBUG): print("Listening on socket.")
         while (True):
             try:
-                sys.stdout.write(self.socket.recv_string())
+                print(" ".join(map(hex, self.socket.recv())))
             except KeyboardInterrupt:
                 sys.stdout.flush()
                 break
 
 
     def send_loop(self):
-        if (DEBUG): print "Writing to socket."
+        if (DEBUG): print("Writing to socket.")
         while (True):
             try:
                 line = sys.stdin.readline()
